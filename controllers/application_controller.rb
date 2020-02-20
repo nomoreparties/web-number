@@ -14,7 +14,15 @@ class ApplicationController < Sinatra::Base
   end
 
   def secret_number
-    @secret_number
+     session[:secret_number]
+  end
+
+  def tries
+    session[:tries]
+  end
+
+  def guesses
+    session[:guesses]
   end
 
   def diff
@@ -25,27 +33,37 @@ class ApplicationController < Sinatra::Base
     params['guess'].to_i
   end
 
+  def first
+    params['first']
+  end
+
   post '/index.erb' do
     case diff
     when "easy"
-      secret_number = rand(1..25) # Random Number from 1 to 25
+      session[:secret_number] = rand(1..25) # Random Number from 1 to 25
     when "medium"
-      secret_number = rand(1..50) # Random Number from 1 to 50
+      session[:secret_number] = rand(1..50) # Random Number from 1 to 50
     when "hard"
-      secret_number = rand(1..100) # Random Number from 1 to 100
+      session[:secret_number] = rand(1..100) # Random Number from 1 to 100
     end
+    session[:guesses] = Array.new
+    session[:tries] = 6
     erb :play
   end
 
   post '/play.erb' do
-    puts secret_number
-    puts guess
-    if guess < secret_number
-      erb :toolow
-    elsif guess > secret_number
-      erb :toohigh
-    elsif guess == secret_number
+    guesses << guess
+    if guess == secret_number
+      session[:tries] -= 1
       erb :win
+    else
+      session[:tries] -= 1
+      puts session[:tries]
+      if session[:tries].to_i == 0
+        erb :fail
+      else
+        erb :play
+      end
     end
   end
 end

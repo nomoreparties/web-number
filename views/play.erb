@@ -1,5 +1,28 @@
 <form action="/play.erb" method="post">
   <label for="guess">Guess a number:</label>
   <input type="text" id="guess" name="guess" value=""><br>
+  <input type="hidden" id="first" name="first" value="no">
   <input type="submit" value="Submit">
-</form>
+</form><br>
+
+<% if first != "no" %>
+    <p></p>
+<% elsif guess < secret_number %>
+    <p>Too low.</P>
+<% elsif guess > secret_number %>
+    <p>Too high.</p>
+<% end %>
+
+<% if first != "no" %>
+  <p></p>
+<% else %>
+  <%= "You have already tried the following numbers: #{guesses}" %>
+<% end %>
+
+<br>
+
+<% if tries == 1 %>
+  <%= "You have #{tries} try remaining." %>
+<% else %>
+  <%= "You have #{tries} tries remaining." %>
+<% end %>
